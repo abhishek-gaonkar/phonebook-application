@@ -1,0 +1,16 @@
+# Serverless related 
+.serverless
+
+# Webpack related 
+.webpack
+
+# Environment related 
+.env
+.env.test
+
+# Modules and Packages
+node_modules
+jspm_packages
+
+# Testing dirs
+artillery/

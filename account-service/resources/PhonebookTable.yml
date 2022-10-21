@@ -1,0 +1,11 @@
+PhonebookTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: PhonebookTable-${self:provider.stage}
+    BillingMode: PAY_PER_REQUEST
+    AttributeDefinitions:
+      - AttributeName: phone
+        AttributeType: N
+    KeySchema:
+      - AttributeName: phone
+        KeyType: HASH

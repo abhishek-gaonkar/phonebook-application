@@ -1,0 +1,67 @@
+service: account-service
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  memorySize: 256
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  vpc: ${file(vpc/PhoneBookVPC.yml):PhoneBookVPC}
+  httpApi:
+    cors: true
+  environment:
+    PHONEBOOK_TABLE_NAME: ${self:custom.PhonebookTable.name}
+    JWT_SECRET_KEY: mytablehas23booksinit!butnonearerecentlyread
+  iamRoleStatements:
+    - ${file(iam/PhonebookTableIAM.yml):PhonebookTableIAM}
+
+resources:
+  Resources:
+    PhonebookTable: ${file(resources/PhonebookTable.yml):PhonebookTable}
+
+functions:
+  authorizeAccount:
+    handler: src/handlers/authorizeAccount.handler
+    name: authorizeAccount-${self:provider.stage}
+    tags:
+      VPCname: abgaonkar
+      ApplicationName: abgaonkar
+
+  createAccount:
+    handler: src/handlers/createAccount.handler
+    name: createAccount-${self:provider.stage}
+    tags:
+      VPCname: abgaonkar
+      ApplicationName: abgaonkar
+    events:
+      - httpApi:
+          path: /user
+          method: POST
+
+  loginAccount:
+    handler: src/handlers/loginAccount.handler
+    name: loginAccount-${self:provider.stage}
+    tags:
+      VPCname: abgaonkar
+      ApplicationName: abgaonkar
+    events:
+      - httpApi:
+          path: /login
+          method: POST
+
+  verifyAccount:
+    handler: src/handlers/verifyAccount.handler
+    name: verifyAccount-${self:provider.stage}
+    tags:
+      VPCname: abgaonkar
+      ApplicationName: abgaonkar
+    events:
+      - httpApi:
+          path: /user
+          method: GET
+
+custom:
+  PhonebookTable:
+    name: !Ref PhonebookTable
+    arn: !GetAtt PhonebookTable.Arn

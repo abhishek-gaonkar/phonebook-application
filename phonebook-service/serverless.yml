@@ -1,0 +1,93 @@
+service: phonebook-service
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  memorySize: 256
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  vpc: ${file(vpc/PhoneBookVPC.yml):PhoneBookVPC}
+  httpApi:
+    cors: true
+    authorizers:
+      accountAuthorizer:
+        type: request
+        functionArn: arn:aws:lambda:us-east-1:405349517354:function:authorizeAccount-dev
+  environment:
+    PHONEBOOK_TABLE_NAME: ${self:custom.PhonebookTable.name}
+  iamRoleStatements:
+    - ${file(iam/PhonebookTableIAM.yml):PhonebookTableIAM}
+    - ${file(iam/LambdaVPCDeploy.yml):LambdaVPCDeploy}
+
+functions:
+  createContact:
+    handler: src/handlers/createContact.handler
+    name: createContact-${self:provider.stage}
+    tags:
+      VPCname: abgaonkar
+      ApplicationName: abgaonkar
+    events:
+      - httpApi:
+          method: POST
+          authorizer:
+            name: accountAuthorizer
+          path: /contact
+
+  getContacts:
+    handler: src/handlers/getContacts.handler
+    name: getContacts-${self:provider.stage}
+    tags:
+      VPCname: abgaonkar
+      ApplicationName: abgaonkar
+    events:
+      - httpApi:
+          method: GET
+          authorizer:
+            name: accountAuthorizer
+          path: /contacts
+
+  getContact:
+    handler: src/handlers/getContact.handler
+    name: getContact-${self:provider.stage}
+    tags:
+      VPCname: abgaonkar
+      ApplicationName: abgaonkar
+    events:
+      - httpApi:
+          method: GET
+          authorizer:
+            name: accountAuthorizer
+          path: /contact/{contactId}
+
+  editContact:
+    handler: src/handlers/editContact.handler
+    name: editContact-${self:provider.stage}
+    tags:
+      VPCname: abgaonkar
+      ApplicationName: abgaonkar
+    events:
+      - httpApi:
+          method: PATCH
+          authorizer:
+            name: accountAuthorizer
+          path: /contact
+
+  deleteContact:
+    handler: src/handlers/deleteContact.handler
+    name: deleteContact-${self:provider.stage}
+    tags:
+      VPCname: abgaonkar
+      ApplicationName: abgaonkar
+    events:
+      - httpApi:
+          method: DELETE
+          authorizer:
+            name: accountAuthorizer
+          path: /contact/{contactId}
+
+custom:
+  # authorizer: arn:aws:lambda:us-east-1:405349517354:function:authorizeAccount-dev
+  PhonebookTable:
+    name: PhonebookTable-${self:provider.stage}
+    arn: arn:aws:dynamodb:us-east-1:405349517354:table/PhonebookTable-${self:provider.stage}

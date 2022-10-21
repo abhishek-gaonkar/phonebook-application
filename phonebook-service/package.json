@@ -1,0 +1,25 @@
+{
+  "name": "phonebook-service",
+  "version": "1.0.0",
+  "description": "Cloud Training Project - Phonebook Application",
+  "author": "abgaonkar",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.2.3",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "webpack": "^5.67.0"
+  },
+  "dependencies": {
+    "@middy/core": "^2.5.7",
+    "@middy/event-normalizer": "^2.5.7",
+    "@middy/http-cors": "^2.5.7",
+    "@middy/http-error-handler": "^2.5.7",
+    "@middy/http-json-body-parser": "^2.5.7",
+    "@middy/validator": "^2.5.7",
+    "aws-sdk": "^2.1062.0",
+    "jsonwebtoken": "^8.5.1"
+  }
+}

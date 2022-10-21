@@ -1,0 +1,6 @@
+PhoneBookVPC:
+  securityGroupIds:
+    - sg-037a97ab1b24e2d48
+  subnetIds:
+    - subnet-00ce8db54db09e1a1
+    - subnet-04be55a1d31d370c5
